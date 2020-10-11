@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:stretch-slim
 
 RUN set -ex \
     # Official Mopidy install for Debian/Ubuntu along with some extensions
@@ -11,7 +11,7 @@ RUN set -ex \
         gstreamer1.0-alsa \
         gstreamer1.0-plugins-bad \
         python3-crypto \
-        python3-distutils \
+        python3-distutils-extra \
  && curl -L https://bootstrap.pypa.io/get-pip.py | python3 - \
  && pip install pipenv \
     # Clean-up
@@ -20,7 +20,7 @@ RUN set -ex \
 
 RUN set -ex \
  && curl -L https://apt.mopidy.com/mopidy.gpg | apt-key add - \
- && curl -L https://apt.mopidy.com/mopidy.list -o /etc/apt/sources.list.d/mopidy.list \
+ && curl -L https://apt.mopidy.com/stretch.list -o /etc/apt/sources.list.d/stretch.list \
  && apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         mopidy \
@@ -33,6 +33,9 @@ RUN set -ex \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ~/.cache
 
 COPY Pipfile Pipfile.lock /
+
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
 
 RUN set -ex \
  && pipenv install --system --deploy --python=$(which python3)
